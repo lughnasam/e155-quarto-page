@@ -33,6 +33,18 @@ All modules were tested using automatic Verilog testbenches as shown in the Resu
 
 All modules that had custom code written for this lab were verified using automatic Verilog testbenches. These testbenches all confirmed appropriate functionality of the modules, save for the top level, which had issues due to the use of the included HSOSC module on the Radiant software that was not present in QuestaSIM. However, this functionality was confirmed for all lower level modules, and no additional logic exists between the lower level modules and the outputs of the top level modules. 
 
+![image](images/counter_results.png)
+*Figure 4: Testbench results showing no errors when testing the counter*
+
+![image](images/led_results.png)
+*Figure 5: Testbench results showing no errors when testing the led decoder*
+
+![image](images/7_seg_results.png)
+*Figure 6: Testbench results showing no errors when testing the 7 segment display decoder*
+
+![image](images/top_results.png)
+*Figure 7: Testbench waveforms showing the oscillating LED on the top module as well as functioning combinational LED logic*
+
 ### Sample File Test Results
 
 All functions of this development board were verified through completion of this lab. Using prewritten test code, the LEDs on the board were verified to work with the SMD 1k $\Omega$ resistors chosen for the boards. The FPGA was able to control LEDs 5-7, and the MCU was able to control LEDs 1-4. The power LED (0) also worked whenever the board was supplied with an appropriate power feed through USB. 
@@ -54,7 +66,7 @@ Following the directions for the AI Prototype for lab 1, the following prompt wa
 The model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.
 
 ![image](images/ai_oscillator.png)
-*Figure 4: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible*
+*Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible*
 
 Another issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well.
 
