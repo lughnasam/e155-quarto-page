@@ -196,6 +196,10 @@ window.Quarto = {
 <section id="testbench-results" class="level3">
 <h3 class="anchored" data-anchor-id="testbench-results">Testbench Results</h3>
 <p>All modules that had custom code written for this lab were verified using automatic Verilog testbenches. These testbenches all confirmed appropriate functionality of the modules, save for the top level, which had issues due to the use of the included HSOSC module on the Radiant software that was not present in QuestaSIM. However, this functionality was confirmed for all lower level modules, and no additional logic exists between the lower level modules and the outputs of the top level modules.</p>
+<p><img src="images/counter_results.png" class="img-fluid" alt="image"> <em>Figure 4: Testbench results showing no errors when testing the counter</em></p>
+<p><img src="images/led_results.png" class="img-fluid" alt="image"> <em>Figure 5: Testbench results showing no errors when testing the led decoder</em></p>
+<p><img src="images/7_seg_results.png" class="img-fluid" alt="image"> <em>Figure 6: Testbench results showing no errors when testing the 7 segment display decoder</em></p>
+<p><img src="images/top_results.png" class="img-fluid" alt="image"> <em>Figure 7: Testbench waveforms showing the oscillating LED on the top module as well as functioning combinational LED logic</em></p>
 </section>
 <section id="sample-file-test-results" class="level3">
 <h3 class="anchored" data-anchor-id="sample-file-test-results">Sample File Test Results</h3>
@@ -215,7 +219,7 @@ window.Quarto = {
 <p>Following the directions for the AI Prototype for lab 1, the following prompt was passed into ChatGPT:</p>
 <p><em>Write SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.</em></p>
 <p>The model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.</p>
-<p><img src="images/ai_oscillator.png" class="img-fluid" alt="image"> <em>Figure 4: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible</em></p>
+<p><img src="images/ai_oscillator.png" class="img-fluid" alt="image"> <em>Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible</em></p>
 <p>Another issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well.</p>
 
 
