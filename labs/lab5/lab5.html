@@ -197,6 +197,7 @@ window.Quarto = {
 <section id="polling-v.s.-interrupts" class="level3">
 <h3 class="anchored" data-anchor-id="polling-v.s.-interrupts">Polling v.s. Interrupts</h3>
 <p>We were able to test the speed of entering an interrupt v.s. reading a toggled pin with polling by writing code to simulate both situations. First set the start of our interrupt function to toggle a pin on, then read the time between an interrupt being raised and the pin being toggled. As seen below, the time from the onset of an interrupt signal to the first line of the function that toggled the pin took 26.4 <span class="math inline">\(\mu s\)</span>. By comparison, having a polling loop that toggled a pin then read an input took 63.6 <span class="math inline">\(\mu s\)</span>. This indicates that interrupts will be more efficient when polling at the rate that we will be at.</p>
+<p>We know that the onset and offset time will be equal to enter these “interrupts” and increment our counter, and they are significantly longer than the code they surround. Thus, we can calculate maximum rpm using the equation <span class="math inline">\(\frac{(t_{onset} * 2)^{-1}}{4*PPR} = \omega_{max}\)</span>. For polling, this is found to be 4.81 rpm, and for interrupts it is found to be 11.61 rpm.</p>
 <p><img src="images/1000024237.jpg" class="img-fluid" alt="image"> <em>Figure 3: Oscilloscope trace showing interrupt response time</em></p>
 <p><img src="images/1000024238.jpg" class="img-fluid" alt="image"> <em>Figure 4: Oscilloscope trace showing polling response time</em></p>
 </section>
