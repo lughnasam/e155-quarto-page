@@ -1,0 +1,44 @@
+# HMC E155 Lab 1: FPGA and MCU Setup and Testing
+
+## Introduction
+
+In this lab, the timers and a GPIO pin on the STM32L432KC microprocessor was used to control a speaker and play songs using C code. Drivers were created to control both a PWM and a delay counter, and a main function was written to combine the two functions.
+
+
+
+## Timer Calculations
+
+When using the counter in the lab to both control a PWM for the speaker and a timer for note duration, multiple calculations had to be made to ensure calculations were within 1% of specification. Selecting a prescaler value of 16, we need to make sure that we will not overflow our autoreload register with whatever value we must enter. This is determined with the formula $ARR = \frac{f_{sysclk}}{PSC * f_{target}}. For 220 Hz, this gives us an $ARR$ value of approx 22,727 and a value of approx 5,000 for 1000 Hz. Plugging these values in to determine the specific frequency we will output, this gives us a value of $f_{target} = 1000$ when $ARR = 5000$ and a value of $f_{target} = 220.002$ when $ARR = 22,727$.
+
+For the timer, we used a prescaler (clock divider) value of $clk_{system} / 1000$, meaning each clk on the timer was 1 ms. This means that the range of values for our duration timer is anywhere from 1 to 65535 ms, or .001 to 65.535 s.
+
+## Schematic
+
+The below schematic shows how this circuit was constructed. Our PWM signal from pin __ was fed through a potentiometer and into the LM386 amplifier. This current was run through two capacitors in parallel to create a capacitance of 250 $\mu F$ before being fed into the speaker. Decoupling was used as necessary.
+
+![image](images/IMG_0107.jpeg) 
+*UPDATE F*
+
+## Results and Discussion
+
+### 7-Segment, Combinational, and Oscillating LEDs Module
+
+Upon running (or resetting) the MCU, the speaker successfully played Fur Elise, paused, and then played the guitar riff from American Teenager by Ethel Cain. There was no distortion to the sound due to hardware overflows, and the songs played as written (in C arrays).
+
+## Conclusion
+
+In this lab, I created a set of MCU drivers that appropriately enable system clocks, counters, and a GPIO pin to send a timed-duration PWM signal to a speaker on a breakout board. The system successfully played both Fur Elise by Beethoven and American Teenager by Ethel Cain. Overall, this lab took me 12 hours.
+
+## AI Prototype
+
+Following the directions for the AI Prototype for lab 1, the following prompt was passed into ChatGPT:
+
+*Write SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.*
+
+The model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.
+
+![image](images/ai_oscillator.png)
+*Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible*
+
+Another issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well.
+
