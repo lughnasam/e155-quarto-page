@@ -150,10 +150,7 @@ window.Quarto = {
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#timer-calculations" id="toc-timer-calculations" class="nav-link" data-scroll-target="#timer-calculations">Timer Calculations</a></li>
   <li><a href="#schematic" id="toc-schematic" class="nav-link" data-scroll-target="#schematic">Schematic</a></li>
-  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion">Results and Discussion</a>
-  <ul class="collapse">
-  <li><a href="#segment-combinational-and-oscillating-leds-module" id="toc-segment-combinational-and-oscillating-leds-module" class="nav-link" data-scroll-target="#segment-combinational-and-oscillating-leds-module">7-Segment, Combinational, and Oscillating LEDs Module</a></li>
-  </ul></li>
+  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion">Results and Discussion</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#ai-prototype" id="toc-ai-prototype" class="nav-link" data-scroll-target="#ai-prototype">AI Prototype</a></li>
   </ul></li>
@@ -170,36 +167,32 @@ window.Quarto = {
 <h1>HMC E155 Lab 1: FPGA and MCU Setup and Testing</h1>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In this lab, the timers and a GPIO pin on the STM32L432KC microprocessor was used to control a speaker and play songs using C code. Drivers were created to control both a PWM and a delay counter, and a main function was written to combine the two functions.</p>
+<p>In this lab, the timers and a GPIO pin on the STM32L432KC microprocessor was used to control a speaker and play songs using C code. Drivers were created to control both a PWM and a delay counter, and a main function was written to combine the two timers and play audio.</p>
 </section>
 <section id="timer-calculations" class="level2">
 <h2 class="anchored" data-anchor-id="timer-calculations">Timer Calculations</h2>
-<p>When using the counter in the lab to both control a PWM for the speaker and a timer for note duration, multiple calculations had to be made to ensure calculations were within 1% of specification. Selecting a prescaler value of 16, we need to make sure that we will not overflow our autoreload register with whatever value we must enter. This is determined with the formula $ARR = . For 220 Hz, this gives us an <span class="math inline">\(ARR\)</span> value of approx 22,727 and a value of approx 5,000 for 1000 Hz. Plugging these values in to determine the specific frequency we will output, this gives us a value of <span class="math inline">\(f_{target} = 1000\)</span> when <span class="math inline">\(ARR = 5000\)</span> and a value of <span class="math inline">\(f_{target} = 220.002\)</span> when <span class="math inline">\(ARR = 22,727\)</span>.</p>
+<p>When using the counter in the lab to both control a PWM for the speaker and a timer for note duration, multiple calculations had to be made to ensure calculations were within 1% of specification. Selecting a prescaler value of 16, we need to make sure that we will not overflow our autoreload register with whatever value we must enter. This is determined with the formula <span class="math inline">\(ARR = \frac{f_{sysclk}}{PSC * f_{target}}\)</span>. For 220 Hz, this gives us an <span class="math inline">\(ARR\)</span> value of approx 22,727 and a value of approx 5,000 for 1000 Hz. Plugging these values in to determine the specific frequency we will output, this gives us a value of <span class="math inline">\(f_{actual} = 1000\)</span> when <span class="math inline">\(ARR = 5000\)</span> and a value of <span class="math inline">\(f_{actual} = 220.002\)</span> when <span class="math inline">\(ARR = 22,727\)</span>.</p>
 <p>For the timer, we used a prescaler (clock divider) value of <span class="math inline">\(clk_{system} / 1000\)</span>, meaning each clk on the timer was 1 ms. This means that the range of values for our duration timer is anywhere from 1 to 65535 ms, or .001 to 65.535 s.</p>
 </section>
 <section id="schematic" class="level2">
 <h2 class="anchored" data-anchor-id="schematic">Schematic</h2>
-<p>The below schematic shows how this circuit was constructed. Our PWM signal from pin __ was fed through a potentiometer and into the LM386 amplifier. This current was run through two capacitors in parallel to create a capacitance of 250 <span class="math inline">\(\mu F\)</span> before being fed into the speaker. Decoupling was used as necessary.</p>
-<p><img src="images/IMG_0107.jpeg" class="img-fluid" alt="image"> <em>UPDATE F</em></p>
+<p>The below schematic shows how this circuit was constructed. Our PWM signal from pin PA6 was fed through a potentiometer and into the LM386 amplifier. This current was run through two capacitors in parallel to create a capacitance of ~250 <span class="math inline">\(\mu F\)</span> before being fed into the speaker. Decoupling was used as necessary to clean sound.</p>
+<p><img src="images/20251106_134659.jpg" class="img-fluid" alt="image"> <em>Figure 1: Schematic for speaker circuit with amplifier and potentiometer</em></p>
 </section>
 <section id="results-and-discussion" class="level2">
 <h2 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h2>
-<section id="segment-combinational-and-oscillating-leds-module" class="level3">
-<h3 class="anchored" data-anchor-id="segment-combinational-and-oscillating-leds-module">7-Segment, Combinational, and Oscillating LEDs Module</h3>
-<p>Upon running (or resetting) the MCU, the speaker successfully played Fur Elise, paused, and then played the guitar riff from American Teenager by Ethel Cain. There was no distortion to the sound due to hardware overflows, and the songs played as written (in C arrays).</p>
-</section>
+<p>Upon running (or resetting) the MCU, the speaker successfully played Fur Elise or played the guitar intro from American Teenager by Ethel Cain. There was no distortion to the sound due to hardware overflows, and the songs played as written (in C arrays).</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>In this lab, I created a set of MCU drivers that appropriately enable system clocks, counters, and a GPIO pin to send a timed-duration PWM signal to a speaker on a breakout board. The system successfully played both Fur Elise by Beethoven and American Teenager by Ethel Cain. Overall, this lab took me 12 hours.</p>
+<p>In this lab, I created a set of MCU drivers that appropriately enable system clocks, counters, and a GPIO pin to send a timed-duration PWM signal to a speaker on a breakout board. The system successfully played both Fur Elise by Ludwig van Beethoven and American Teenager by Ethel Cain. Overall, this lab took me 20 hours.</p>
 </section>
 <section id="ai-prototype" class="level2">
 <h2 class="anchored" data-anchor-id="ai-prototype">AI Prototype</h2>
-<p>Following the directions for the AI Prototype for lab 1, the following prompt was passed into ChatGPT:</p>
-<p><em>Write SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.</em></p>
-<p>The model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.</p>
-<p><img src="images/ai_oscillator.png" class="img-fluid" alt="image"> <em>Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible</em></p>
-<p>Another issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well.</p>
+<p>Following the directions for the AI Prototype for lab 4, the following prompt was passed into ChatGPT:</p>
+<p><em>What timers should I use on the STM32L432KC to generate frequencies ranging from 220Hz to 1kHz? What’s the best choice of timer if I want to easily connect it to a GPIO pin? What formulae are relevant, and what registers need to be set to configure them properly?</em></p>
+<p>The model correctly displayed information on the various timers on our STM32L432KC, and then selected TIM2 as the timer we should use. It even wrote code (that seems reasonable at a glance) to generate an A4 on a speaker. This was a useful tool to learn something, but I would definitely want to know neough about it to fact check the AI before I trusted this, and I don’t think people using it would be able to discern the difference.</p>
+<p><img src="images/aicode.png" class="img-fluid" alt="image"> <em>Figure 8: Code for the oscillator written by ChatGPT</em></p>
 
 
 </section>
