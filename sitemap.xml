@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://lughnasam.github.io/e155-quarto-page/project_midpoint/project_midpoint.html</loc>
+    <lastmod>2025-11-19T01:13:03.198Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lughnasam.github.io/e155-quarto-page/project/project_overview/project_overview.html</loc>
+    <lastmod>2025-11-04T22:23:35.132Z</lastmod>
+  </url>
+  <url>
     <loc>https://lughnasam.github.io/e155-quarto-page/posts/first-post.html</loc>
     <lastmod>2025-08-30T21:51:05.461Z</lastmod>
   </url>
@@ -10,15 +18,11 @@
   </url>
   <url>
     <loc>https://lughnasam.github.io/e155-quarto-page/labs/lab4/lab4.html</loc>
-    <lastmod>2025-11-06T22:09:32.304Z</lastmod>
+    <lastmod>2025-12-05T11:19:59.060Z</lastmod>
   </url>
   <url>
     <loc>https://lughnasam.github.io/e155-quarto-page/labs/lab1/lab1.html</loc>
     <lastmod>2025-09-05T03:43:58.786Z</lastmod>
-  </url>
-  <url>
-    <loc>https://lughnasam.github.io/e155-quarto-page/blog.html</loc>
-    <lastmod>2025-08-30T21:51:05.417Z</lastmod>
   </url>
   <url>
     <loc>https://lughnasam.github.io/e155-quarto-page/index.html</loc>
@@ -26,14 +30,22 @@
   </url>
   <url>
     <loc>https://lughnasam.github.io/e155-quarto-page/labs/lab2/lab2.html</loc>
-    <lastmod>2025-09-11T21:57:40.382Z</lastmod>
+    <lastmod>2025-12-05T11:19:46.214Z</lastmod>
   </url>
   <url>
     <loc>https://lughnasam.github.io/e155-quarto-page/labs/lab5/lab5.html</loc>
     <lastmod>2025-10-09T22:24:44.985Z</lastmod>
   </url>
   <url>
-    <loc>https://lughnasam.github.io/e155-quarto-page/labs/project_overview/project_overview.html</loc>
-    <lastmod>2025-11-04T22:23:35.132Z</lastmod>
+    <loc>https://lughnasam.github.io/e155-quarto-page/labs.html</loc>
+    <lastmod>2025-12-05T08:14:39.996Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lughnasam.github.io/e155-quarto-page/project/project_final_report/project_final_report.html</loc>
+    <lastmod>2025-12-05T11:17:59.534Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lughnasam.github.io/e155-quarto-page/project.html</loc>
+    <lastmod>2025-12-05T08:17:17.424Z</lastmod>
   </url>
 </urlset>

@@ -1,8 +1,19 @@
 [
   {
-    "listing": "/blog.html",
+    "listing": "/labs.html",
     "items": [
-      "/posts/first-post.html"
+      "/labs/lab1/lab1.html",
+      "/labs/lab2/lab2.html",
+      "/labs/lab4/lab4.html",
+      "/labs/lab5/lab5.html",
+      "/labs/lab6/lab6.html"
+    ]
+  },
+  {
+    "listing": "/project.html",
+    "items": [
+      "/project/project_final_report/project_final_report.html",
+      "/project/project_overview/project_overview.html"
     ]
   }
 ]

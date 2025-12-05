@@ -1,5 +1,103 @@
 [
   {
+    "objectID": "project_midpoint/project_midpoint.html",
+    "href": "project_midpoint/project_midpoint.html",
+    "title": "E155 Final Project: Midpoint Check-In",
+    "section": "",
+    "text": "Our project is slightly behind where we intended to be by this point. I believe that we misidentified what the midpoint would be for our project, as our two riskiest components sat before our midpoint check-in. We did complete these two major components (FPGA architecture and RX chain), which is a major load off of our project, and we are feeling confident in completion.\n\n\n\nBelow is the electrical schematic for our RX chain. This schematic is a filtering and conditioning circuit for the Analog to Digital Converter. The butterworth filter takes in the analog signal from the audio jack and removes any aliasing. The first opamp is a unity gain amplifier. The second opamp is a summing amplifier that raises the signal from centered around 0V to centered around 2.5V, it is adjusted by varying the 100K potentiometers. Then there is another unity gain amplifier into a non inverting amplifier. The non-inverting amplifier amplifies the signal to fit the ADC input range of 0V to 5V.\nCurrently the summing amplifier and the noninverting amplifier are connected and working. To still be built is the butterworth filter and the ADC is still to be connected."
+  },
+  {
+    "objectID": "project_midpoint/project_midpoint.html#overview",
+    "href": "project_midpoint/project_midpoint.html#overview",
+    "title": "E155 Final Project: Midpoint Check-In",
+    "section": "",
+    "text": "Our project is slightly behind where we intended to be by this point. I believe that we misidentified what the midpoint would be for our project, as our two riskiest components sat before our midpoint check-in. We did complete these two major components (FPGA architecture and RX chain), which is a major load off of our project, and we are feeling confident in completion."
+  },
+  {
+    "objectID": "project_midpoint/project_midpoint.html#electrical-schematic",
+    "href": "project_midpoint/project_midpoint.html#electrical-schematic",
+    "title": "E155 Final Project: Midpoint Check-In",
+    "section": "",
+    "text": "Below is the electrical schematic for our RX chain. This schematic is a filtering and conditioning circuit for the Analog to Digital Converter. The butterworth filter takes in the analog signal from the audio jack and removes any aliasing. The first opamp is a unity gain amplifier. The second opamp is a summing amplifier that raises the signal from centered around 0V to centered around 2.5V, it is adjusted by varying the 100K potentiometers. Then there is another unity gain amplifier into a non inverting amplifier. The non-inverting amplifier amplifies the signal to fit the ADC input range of 0V to 5V.\nCurrently the summing amplifier and the noninverting amplifier are connected and working. To still be built is the butterworth filter and the ADC is still to be connected."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html",
+    "href": "project/project_overview/project_overview.html",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "Our final project will be to design and build a digital guitar amplifier capable of producing 4 audio effects: distortion, reverb, vibrato, and chorus. Using an iCE 40UP5K FPGA and an ADC, we will sample our guitar output and perform all effects related to time-delay. An STM32L432KC microcontroller will perform all modifications that change the amplitude of our signal in a non-linear way as well as converting our digital signal back to an analog one before recentering and playing our signal.\n\n\n\nOur system will meet the following specifications upon completion:\n\nPlay the processed audio output from a guitar on a speaker.\nImplement real-time digital effects processing on an STM32L432KC microcontroller.\nInterface a UPduino FPGA for control logic and foot pedal input handling.\nPass a clear audio sample through the FPGA memory architecture.\nDesign and integrate an audio amplifier output stage capable of directly driving a small guitar speaker or external cabinet.\nDevelop a low-noise analog front-end for clean audio acquisition and output.\nCreate a user-friendly interface using foot pedals for live control and effect toggling.\n\n\n\n\nThe system consists of the following components:\nThe amplifier system consists of the following main components:\n\nSTM32L432KC MCU:\n\nTakes sampled input data from the FPGA and applies some audio distortion effects. Drives the speaker through an audio amplifier by outputting a wave signal through a DAC channel\n\nUPduino (Lattice iCE40 FPGA):\n\nTakes input from ADC, samples the input frequency and subsequently does some of the delay based audio effects. Outputs the sampled signal or the modified signal to the MCU through SPI communication. Handles the input controls from some of the toggle switches.\n\nAnalog Front-End:\n\nIncludes preamplification, signal conditioning, and level shifting circuits to ensure proper ADC input voltage levels and low-noise operation. The output stage reconditions the signal for amplifier or headphone output.\n\nFoot Pedal Controls:\n\nUp to four pedals are used to toggle each effect (reverb, delay, chorus, distortion) on or off, as well as adjust intensity parameters such as delay time, chorus depth, or reverb level.\n\nAmplifier Output:\n\nPerforms amplification of signal from the MCU which is passed through an audio amplifier chip that drives into a guitar amp.\n\n\n\n\n\nThe FPGA will communicate with an ADC over a serial communication protocol, enabling it to read in 12-bit analog signal. This information will be stored in the FPGA memory before being read out at various times to implement delay based effects in our sound.\n\n\n\nIn this project, the MCU will take data over SPI communications from the FPGA. After this, the MCU will determine whether a distortion and/or vibrato effect should be applied to the signal. It will apply the relevant transformations, and then it will use the onboard DAC to convert back to an analog signal before outputting through the second stage amplifier.\n\n\n\nOur design has two main points that will be high-risk areas for our design: the FPGA design with an unfamiliar component (SRAM) and the analog preamplifier to bring the guitar’s output signal into range for the ADC (0-3.3 V). This design was talked about in class, and we should be able to use the information from lecture to create a preamplifier and appropriately generate our offset. Additionally, when using the SRAM on the FPGA, we should be extra careful to understand the datasheet fully in order to correctly implement the memory-based delay effects.\n\n\n\nTwo major points of our circuit will need to be calculated to find optimal operating conditions; these are the input and output points as well as the internal DSP relevant to making all desired effects.\nOn the analog side, input signal ranges from 0.1 to 1.0 Vpp centered around 0 V, with a frequency between 80 and 5000 Hz. We need to be able to shift the signal and amplify to fit the FPGA input specs of 0 to 3.3 V. this means, for an op-amp:\n\nSlew rate\n\n\\(SR \\geq 2 \\pi f_{max} V_{pk}\\)\n\\(SR \\geq 5 \\frac{V}{\\mu s}\\)\n\nGBW Product\n\nIf max closed loop gain is 10, and we desire a flat response to 100 KHz, choose \\(GBW \\geq 10 * 100 kHz = 1 MHz\\)\n\n\nFor the digital domain, we are mostly worried about the effects of aliasing on our sampled data. Because distortion works by clipping the extreme ranges of our signal, and chorus and reverb work by slightly delaying the phase of our signal before recombining it in some ratio, sampling at a much larger rate than our output frequency (44100 KHz) will enable an appropriately high fidelity output.\n\n\n\nThe following block diagram shows how signals will flow through the system.\n Figure 1: Block diagram of system design\nThe guitar signal will be sent through a pre-processing amplifier that will limit noise as well as increasing the voltage of the guitar’s signal to a readable level. The FPGA will read the signal and convert it to digital, as well as applying the reverb and chorus effects if those pedals are active. The signal is then passed over SPI communication to the MCU, where the distortion and vibrato effects can be applied. Finally, the MCU will use its onboard DAC to convert the signal back to analog, where it will encounter a post-processing amplifier before going into a guitar amplifier.\n\n\n\nThe following GANTT chart shows how work will be broken down over the 5 weeks given for the project.\n Figure 2: GANTT chart showing schedule for project over 5 weeks\n\n\n\nBelow is the bill of materials we have planned for this project:\n Figure 3: BoM for project"
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#description",
+    "href": "project/project_overview/project_overview.html#description",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "Our final project will be to design and build a digital guitar amplifier capable of producing 4 audio effects: distortion, reverb, vibrato, and chorus. Using an iCE 40UP5K FPGA and an ADC, we will sample our guitar output and perform all effects related to time-delay. An STM32L432KC microcontroller will perform all modifications that change the amplitude of our signal in a non-linear way as well as converting our digital signal back to an analog one before recentering and playing our signal."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#system-specifications",
+    "href": "project/project_overview/project_overview.html#system-specifications",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "Our system will meet the following specifications upon completion:\n\nPlay the processed audio output from a guitar on a speaker.\nImplement real-time digital effects processing on an STM32L432KC microcontroller.\nInterface a UPduino FPGA for control logic and foot pedal input handling.\nPass a clear audio sample through the FPGA memory architecture.\nDesign and integrate an audio amplifier output stage capable of directly driving a small guitar speaker or external cabinet.\nDevelop a low-noise analog front-end for clean audio acquisition and output.\nCreate a user-friendly interface using foot pedals for live control and effect toggling."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#system-overview",
+    "href": "project/project_overview/project_overview.html#system-overview",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "The system consists of the following components:\nThe amplifier system consists of the following main components:\n\nSTM32L432KC MCU:\n\nTakes sampled input data from the FPGA and applies some audio distortion effects. Drives the speaker through an audio amplifier by outputting a wave signal through a DAC channel\n\nUPduino (Lattice iCE40 FPGA):\n\nTakes input from ADC, samples the input frequency and subsequently does some of the delay based audio effects. Outputs the sampled signal or the modified signal to the MCU through SPI communication. Handles the input controls from some of the toggle switches.\n\nAnalog Front-End:\n\nIncludes preamplification, signal conditioning, and level shifting circuits to ensure proper ADC input voltage levels and low-noise operation. The output stage reconditions the signal for amplifier or headphone output.\n\nFoot Pedal Controls:\n\nUp to four pedals are used to toggle each effect (reverb, delay, chorus, distortion) on or off, as well as adjust intensity parameters such as delay time, chorus depth, or reverb level.\n\nAmplifier Output:\n\nPerforms amplification of signal from the MCU which is passed through an audio amplifier chip that drives into a guitar amp."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#fpga-design-details",
+    "href": "project/project_overview/project_overview.html#fpga-design-details",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "The FPGA will communicate with an ADC over a serial communication protocol, enabling it to read in 12-bit analog signal. This information will be stored in the FPGA memory before being read out at various times to implement delay based effects in our sound."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#mcu-design-details",
+    "href": "project/project_overview/project_overview.html#mcu-design-details",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "In this project, the MCU will take data over SPI communications from the FPGA. After this, the MCU will determine whether a distortion and/or vibrato effect should be applied to the signal. It will apply the relevant transformations, and then it will use the onboard DAC to convert back to an analog signal before outputting through the second stage amplifier."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#riskiest-elements",
+    "href": "project/project_overview/project_overview.html#riskiest-elements",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "Our design has two main points that will be high-risk areas for our design: the FPGA design with an unfamiliar component (SRAM) and the analog preamplifier to bring the guitar’s output signal into range for the ADC (0-3.3 V). This design was talked about in class, and we should be able to use the information from lecture to create a preamplifier and appropriately generate our offset. Additionally, when using the SRAM on the FPGA, we should be extra careful to understand the datasheet fully in order to correctly implement the memory-based delay effects."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#calculations",
+    "href": "project/project_overview/project_overview.html#calculations",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "Two major points of our circuit will need to be calculated to find optimal operating conditions; these are the input and output points as well as the internal DSP relevant to making all desired effects.\nOn the analog side, input signal ranges from 0.1 to 1.0 Vpp centered around 0 V, with a frequency between 80 and 5000 Hz. We need to be able to shift the signal and amplify to fit the FPGA input specs of 0 to 3.3 V. this means, for an op-amp:\n\nSlew rate\n\n\\(SR \\geq 2 \\pi f_{max} V_{pk}\\)\n\\(SR \\geq 5 \\frac{V}{\\mu s}\\)\n\nGBW Product\n\nIf max closed loop gain is 10, and we desire a flat response to 100 KHz, choose \\(GBW \\geq 10 * 100 kHz = 1 MHz\\)\n\n\nFor the digital domain, we are mostly worried about the effects of aliasing on our sampled data. Because distortion works by clipping the extreme ranges of our signal, and chorus and reverb work by slightly delaying the phase of our signal before recombining it in some ratio, sampling at a much larger rate than our output frequency (44100 KHz) will enable an appropriately high fidelity output."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#block-diagram",
+    "href": "project/project_overview/project_overview.html#block-diagram",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "The following block diagram shows how signals will flow through the system.\n Figure 1: Block diagram of system design\nThe guitar signal will be sent through a pre-processing amplifier that will limit noise as well as increasing the voltage of the guitar’s signal to a readable level. The FPGA will read the signal and convert it to digital, as well as applying the reverb and chorus effects if those pedals are active. The signal is then passed over SPI communication to the MCU, where the distortion and vibrato effects can be applied. Finally, the MCU will use its onboard DAC to convert the signal back to analog, where it will encounter a post-processing amplifier before going into a guitar amplifier."
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#schedule-and-work-breakdown",
+    "href": "project/project_overview/project_overview.html#schedule-and-work-breakdown",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "The following GANTT chart shows how work will be broken down over the 5 weeks given for the project.\n Figure 2: GANTT chart showing schedule for project over 5 weeks"
+  },
+  {
+    "objectID": "project/project_overview/project_overview.html#bill-of-materialsbudget",
+    "href": "project/project_overview/project_overview.html#bill-of-materialsbudget",
+    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "Below is the bill of materials we have planned for this project:\n Figure 3: BoM for project"
+  },
+  {
     "objectID": "labs/lab6/lab6.html",
     "href": "labs/lab6/lab6.html",
     "title": "HMC E155 Lab 6: The Internet of Things and Serial Peripheral Interface",
@@ -44,49 +142,49 @@
   {
     "objectID": "labs/lab4/lab4.html",
     "href": "labs/lab4/lab4.html",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "In this lab, the timers and a GPIO pin on the STM32L432KC microprocessor was used to control a speaker and play songs using C code. Drivers were created to control both a PWM and a delay counter, and a main function was written to combine the two timers and play audio.\n\n\n\nWhen using the counter in the lab to both control a PWM for the speaker and a timer for note duration, multiple calculations had to be made to ensure calculations were within 1% of specification. Selecting a prescaler value of 16, we need to make sure that we will not overflow our autoreload register with whatever value we must enter. This is determined with the formula \\(ARR = \\frac{f_{sysclk}}{PSC * f_{target}}\\). For 220 Hz, this gives us an \\(ARR\\) value of approx 22,727 and a value of approx 5,000 for 1000 Hz. Plugging these values in to determine the specific frequency we will output, this gives us a value of \\(f_{actual} = 1000\\) when \\(ARR = 5000\\) and a value of \\(f_{actual} = 220.002\\) when \\(ARR = 22,727\\).\nFor the timer, we used a prescaler (clock divider) value of \\(clk_{system} / 1000\\), meaning each clk on the timer was 1 ms. This means that the range of values for our duration timer is anywhere from 1 to 65535 ms, or .001 to 65.535 s.\n\n\n\nThe below schematic shows how this circuit was constructed. Our PWM signal from pin PA6 was fed through a potentiometer and into the LM386 amplifier. This current was run through two capacitors in parallel to create a capacitance of ~250 \\(\\mu F\\) before being fed into the speaker. Decoupling was used as necessary to clean sound.\n Figure 1: Schematic for speaker circuit with amplifier and potentiometer\n\n\n\nUpon running (or resetting) the MCU, the speaker successfully played Fur Elise or played the guitar intro from American Teenager by Ethel Cain. There was no distortion to the sound due to hardware overflows, and the songs played as written (in C arrays).\n\n\n\nIn this lab, I created a set of MCU drivers that appropriately enable system clocks, counters, and a GPIO pin to send a timed-duration PWM signal to a speaker on a breakout board. The system successfully played both Fur Elise by Ludwig van Beethoven and American Teenager by Ethel Cain. Overall, this lab took me 20 hours.\n\n\n\nFollowing the directions for the AI Prototype for lab 4, the following prompt was passed into ChatGPT:\nWhat timers should I use on the STM32L432KC to generate frequencies ranging from 220Hz to 1kHz? What’s the best choice of timer if I want to easily connect it to a GPIO pin? What formulae are relevant, and what registers need to be set to configure them properly?\nThe model correctly displayed information on the various timers on our STM32L432KC, and then selected TIM2 as the timer we should use. It even wrote code (that seems reasonable at a glance) to generate an A4 on a speaker. This was a useful tool to learn something, but I would definitely want to know neough about it to fact check the AI before I trusted this, and I don’t think people using it would be able to discern the difference.\n Figure 8: Code for the oscillator written by ChatGPT"
   },
   {
     "objectID": "labs/lab4/lab4.html#introduction",
     "href": "labs/lab4/lab4.html#introduction",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "In this lab, the timers and a GPIO pin on the STM32L432KC microprocessor was used to control a speaker and play songs using C code. Drivers were created to control both a PWM and a delay counter, and a main function was written to combine the two timers and play audio."
   },
   {
     "objectID": "labs/lab4/lab4.html#timer-calculations",
     "href": "labs/lab4/lab4.html#timer-calculations",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "When using the counter in the lab to both control a PWM for the speaker and a timer for note duration, multiple calculations had to be made to ensure calculations were within 1% of specification. Selecting a prescaler value of 16, we need to make sure that we will not overflow our autoreload register with whatever value we must enter. This is determined with the formula \\(ARR = \\frac{f_{sysclk}}{PSC * f_{target}}\\). For 220 Hz, this gives us an \\(ARR\\) value of approx 22,727 and a value of approx 5,000 for 1000 Hz. Plugging these values in to determine the specific frequency we will output, this gives us a value of \\(f_{actual} = 1000\\) when \\(ARR = 5000\\) and a value of \\(f_{actual} = 220.002\\) when \\(ARR = 22,727\\).\nFor the timer, we used a prescaler (clock divider) value of \\(clk_{system} / 1000\\), meaning each clk on the timer was 1 ms. This means that the range of values for our duration timer is anywhere from 1 to 65535 ms, or .001 to 65.535 s."
   },
   {
     "objectID": "labs/lab4/lab4.html#schematic",
     "href": "labs/lab4/lab4.html#schematic",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "The below schematic shows how this circuit was constructed. Our PWM signal from pin PA6 was fed through a potentiometer and into the LM386 amplifier. This current was run through two capacitors in parallel to create a capacitance of ~250 \\(\\mu F\\) before being fed into the speaker. Decoupling was used as necessary to clean sound.\n Figure 1: Schematic for speaker circuit with amplifier and potentiometer"
   },
   {
     "objectID": "labs/lab4/lab4.html#results-and-discussion",
     "href": "labs/lab4/lab4.html#results-and-discussion",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "Upon running (or resetting) the MCU, the speaker successfully played Fur Elise or played the guitar intro from American Teenager by Ethel Cain. There was no distortion to the sound due to hardware overflows, and the songs played as written (in C arrays)."
   },
   {
     "objectID": "labs/lab4/lab4.html#conclusion",
     "href": "labs/lab4/lab4.html#conclusion",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "In this lab, I created a set of MCU drivers that appropriately enable system clocks, counters, and a GPIO pin to send a timed-duration PWM signal to a speaker on a breakout board. The system successfully played both Fur Elise by Ludwig van Beethoven and American Teenager by Ethel Cain. Overall, this lab took me 20 hours."
   },
   {
     "objectID": "labs/lab4/lab4.html#ai-prototype",
     "href": "labs/lab4/lab4.html#ai-prototype",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 4: Digital Audio",
     "section": "",
     "text": "Following the directions for the AI Prototype for lab 4, the following prompt was passed into ChatGPT:\nWhat timers should I use on the STM32L432KC to generate frequencies ranging from 220Hz to 1kHz? What’s the best choice of timer if I want to easily connect it to a GPIO pin? What formulae are relevant, and what registers need to be set to configure them properly?\nThe model correctly displayed information on the various timers on our STM32L432KC, and then selected TIM2 as the timer we should use. It even wrote code (that seems reasonable at a glance) to generate an A4 on a speaker. This was a useful tool to learn something, but I would definitely want to know neough about it to fact check the AI before I trusted this, and I don’t think people using it would be able to discern the difference.\n Figure 8: Code for the oscillator written by ChatGPT"
   },
@@ -147,13 +245,6 @@
     "text": "Following the directions for the AI Prototype for lab 1, the following prompt was passed into ChatGPT:\nWrite SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.\nThe model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.\n Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible\nAnother issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well."
   },
   {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "E155 Blog",
-    "section": "",
-    "text": "Hello Quarto\n\n\nWelcome to my Quarto portfolio\n\n\n\n\n\nAug 23, 2024\n\n\nLughnasa Miller\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "E155 Portfolio",
@@ -163,56 +254,56 @@
   {
     "objectID": "labs/lab2/lab2.html",
     "href": "labs/lab2/lab2.html",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "In this lab, a state-based solution was created to independently take the inputs of two 4-segment switches (to represent hex numbers) and display them on a two-diget seven segment display using only one seven segment decoder, necessitating an FSM. A switching frequency was generated, and addtionally, the sum of the two switches at any given time was displayed using a string of LEDs in binary representation.\n\n\n\nThe block diagram in the below image shows the hierarchical structure of the Verilog modules written for this lab. The top module (lab2_ly) contains all other modules, and the HSOSC module from the UP5K board is used. A counter module was reused from lab 1 to modulate the clock down to ~90 Hz on the 17st bit of the counter, allowing it to oscillate the power between our two sides of the seven segment display, also representing our two states. A single decoder determined the multiplexed selection between the two switch outputs, and a full adder determined the LED binary output.\n Figure 1: Block diagram of hierarchical SystemVerilog\n\n\n\nThe two schematics below show how the LEDs in the given system are powered. The 7-segment display common power pins are given a ~3.3V input through a PNP transistor with 1 \\(\\mu A\\) at the base (necessitating an ~330 \\(\\Omega\\) resistor), and pins at the end of them are pulled high to turn off a given segment. Only one set of pins was powered and pulled appropriately at any given time, and the 90 Hz oscillating frequency ensured stable powering without blending of the two signals. As per the last lab, a 200 \\(\\Omega\\) resistor was selected as a current limiting resistor. The pins connected to the breakout switch were connected to ground with pullup resistors set on the FPGA pins.\n Figure 2: Schematic for the breakout board\n\n\n\nThe onboard oscillator was used from the iCE40 UltraPlus FPGA to generate a clock pulse, which was used with a SystemVerilog counter/clock divider module to control the oscillating LED. The switch banks on the development board and breakout board were used to represent the four binary bits of two hexadecimal numbers, and these switches fed into a full adder to determine when onboard LEDs should be enabled. A state machine toggled between the two switch inputs into the decoder, powering the relevant side of the seven segment display in the process All current-limiting resistors for the 7-segment display were determined with a target current of 7 \\(\\mu A\\) and a voltage drop across the LEDs of 1.95 V, leading to a resistance value of ~ 200 \\(\\Omega\\). A 330 \\(\\Omega\\) resistor was used from the enable pins to power into the base of a PNP transistor with a target current of 1 \\(\\mu A\\). This then fed into the seven segment display from a 3V3 feed on the collector, and the transistors with oscillating base inputs swapped power at about 90 Hz.\nAll modules were tested using automatic Verilog testbenches as shown in the Results and Discussion section.\n\n\n\n\n\nNewly written modules (enabled FF and top level) were tested using automated verilog testbenches to ensure that all sums were correct in the outputs, that the power pins swapped at the correct frequency, and that the enabled FF worked as intended. See all testbench results below.\n Figure 3: Testbench waveforms showing the oscillating power states on the top module as well as functioning combinational LED logic\n Figure 4: Testbench results showing no errors when testing the counter\n\n\n\nTesting verification was done to confirm that the seven segment and LEDs displayed appropriate outputs based on switched inputs. All segments were equally bright, and there was no blending between the two displays due to coupling between the two inputs.\n\n\n\n\nIn this lab, I created a SystemVerilog hierarchy and accompanying breakout board that controlled 5 LEDs using a full adder, and used an oscillating FSM to control two separate seven segment LED displays using one decoder. Overall, I spent 5 hours on this lab.\n\n\n\nFollowing the directions for the AI Prototype for lab 1, the following prompt was passed into ChatGPT:\nWrite SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.\nThe model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.\n Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible\nAnother issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well."
   },
   {
     "objectID": "labs/lab2/lab2.html#introduction",
     "href": "labs/lab2/lab2.html#introduction",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "In this lab, a state-based solution was created to independently take the inputs of two 4-segment switches (to represent hex numbers) and display them on a two-diget seven segment display using only one seven segment decoder, necessitating an FSM. A switching frequency was generated, and addtionally, the sum of the two switches at any given time was displayed using a string of LEDs in binary representation."
   },
   {
     "objectID": "labs/lab2/lab2.html#block-diagram",
     "href": "labs/lab2/lab2.html#block-diagram",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "The block diagram in the below image shows the hierarchical structure of the Verilog modules written for this lab. The top module (lab2_ly) contains all other modules, and the HSOSC module from the UP5K board is used. A counter module was reused from lab 1 to modulate the clock down to ~90 Hz on the 17st bit of the counter, allowing it to oscillate the power between our two sides of the seven segment display, also representing our two states. A single decoder determined the multiplexed selection between the two switch outputs, and a full adder determined the LED binary output.\n Figure 1: Block diagram of hierarchical SystemVerilog"
   },
   {
     "objectID": "labs/lab2/lab2.html#schematic",
     "href": "labs/lab2/lab2.html#schematic",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "The two schematics below show how the LEDs in the given system are powered. The 7-segment display common power pins are given a ~3.3V input through a PNP transistor with 1 \\(\\mu A\\) at the base (necessitating an ~330 \\(\\Omega\\) resistor), and pins at the end of them are pulled high to turn off a given segment. Only one set of pins was powered and pulled appropriately at any given time, and the 90 Hz oscillating frequency ensured stable powering without blending of the two signals. As per the last lab, a 200 \\(\\Omega\\) resistor was selected as a current limiting resistor. The pins connected to the breakout switch were connected to ground with pullup resistors set on the FPGA pins.\n Figure 2: Schematic for the breakout board"
   },
   {
     "objectID": "labs/lab2/lab2.html#design-testing-and-methodology",
     "href": "labs/lab2/lab2.html#design-testing-and-methodology",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "The onboard oscillator was used from the iCE40 UltraPlus FPGA to generate a clock pulse, which was used with a SystemVerilog counter/clock divider module to control the oscillating LED. The switch banks on the development board and breakout board were used to represent the four binary bits of two hexadecimal numbers, and these switches fed into a full adder to determine when onboard LEDs should be enabled. A state machine toggled between the two switch inputs into the decoder, powering the relevant side of the seven segment display in the process All current-limiting resistors for the 7-segment display were determined with a target current of 7 \\(\\mu A\\) and a voltage drop across the LEDs of 1.95 V, leading to a resistance value of ~ 200 \\(\\Omega\\). A 330 \\(\\Omega\\) resistor was used from the enable pins to power into the base of a PNP transistor with a target current of 1 \\(\\mu A\\). This then fed into the seven segment display from a 3V3 feed on the collector, and the transistors with oscillating base inputs swapped power at about 90 Hz.\nAll modules were tested using automatic Verilog testbenches as shown in the Results and Discussion section."
   },
   {
     "objectID": "labs/lab2/lab2.html#results-and-discussion",
     "href": "labs/lab2/lab2.html#results-and-discussion",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "Newly written modules (enabled FF and top level) were tested using automated verilog testbenches to ensure that all sums were correct in the outputs, that the power pins swapped at the correct frequency, and that the enabled FF worked as intended. See all testbench results below.\n Figure 3: Testbench waveforms showing the oscillating power states on the top module as well as functioning combinational LED logic\n Figure 4: Testbench results showing no errors when testing the counter\n\n\n\nTesting verification was done to confirm that the seven segment and LEDs displayed appropriate outputs based on switched inputs. All segments were equally bright, and there was no blending between the two displays due to coupling between the two inputs."
   },
   {
     "objectID": "labs/lab2/lab2.html#conclusion",
     "href": "labs/lab2/lab2.html#conclusion",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "In this lab, I created a SystemVerilog hierarchy and accompanying breakout board that controlled 5 LEDs using a full adder, and used an oscillating FSM to control two separate seven segment LED displays using one decoder. Overall, I spent 5 hours on this lab."
   },
   {
     "objectID": "labs/lab2/lab2.html#ai-prototype",
     "href": "labs/lab2/lab2.html#ai-prototype",
-    "title": "HMC E155 Lab 1: FPGA and MCU Setup and Testing",
+    "title": "HMC E155 Lab 2: Multiplexed 7-Segment Display",
     "section": "",
     "text": "Following the directions for the AI Prototype for lab 1, the following prompt was passed into ChatGPT:\nWrite SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.\nThe model handled this shockingly well, and no major errors were found in the code itself. It used a slightly lazy way to create a counter, resetting the counter value every time the correct number of cycles had passed rather than creating a counter that uses a P value and the final bit of an N bit counter (as taught in E85). However, this compiled and worked in the Radiant simulation. However, a minor issue that I did notice was that ChatGPT thought the onboard high speed oscillator operated at 12 MHz, not 48 MHz as it actually operates. When this was pointed out to GPT, it quickly corrected that line.\n Figure 8: Code for the oscillator written by ChatGPT, which has many strange ways to specify bit length but otherwise seems very feasible\nAnother issue that I noticed is that the bit lengths of many constants were not specified. Knowing how many different examples of counters must be in the model, it makes sense that these things would be issues, but it still is slightly surprising that it was so much of an issue. A lot of them only generated warnings in Radiant, but if the code were to be passed through something like Verilator or another SystemVerilog linting program, it would likely point out a lot of other isues as well."
   },
@@ -273,80 +364,94 @@
     "text": "Following the directions for the AI Prototype for lab 5, the following prompt was passed into ChatGPT:\nWrite me interrupt handlers to interface with a quadrature encoder. I’m using the STM32L432KC, what pins should I connect the encoder to in order to allow it to easily trigger the interrupts?\nThe AI model did not do very well on this task. The first thing it did was enable interrupts for every edge of the program. However, it missed setting some of the signal select muxes that tell the interrupt handlers where to look for interrupt signals. As a result, this code did not successfully run because it couldn’t recognize interrupts. See the below code from GPT.\n Figure 5: Code for the interrupt enables written by ChatGPT, which is missing key register writes\nThe interrupt handler itself also has a critical bug, which will incorrectly decrement the counter when \\(A == B\\). As a result, I do not believe this code would have correctly incremented and tracked speed, outputting something very close to 0 every telemetry frame.\n Figure 6: Code for interrupt handlers written by ChatGPT, which does not correctly increment counter"
   },
   {
-    "objectID": "labs/project_overview/project_overview.html",
-    "href": "labs/project_overview/project_overview.html",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "labs.html",
+    "href": "labs.html",
+    "title": "E155 Labs",
     "section": "",
-    "text": "Our final project will be to design and build a digital guitar amplifier capable of producing 4 audio effects: distortion, reverb, vibrato, and chorus. Using an iCE 40UP5K FPGA and an ADC, we will sample our guitar output and perform all effects related to time-delay. An STM32L432KC microcontroller will perform all modifications that change the amplitude of our signal in a non-linear way as well as converting our digital signal back to an analog one before recentering and playing our signal.\n\n\n\nOur system will meet the following specifications upon completion:\n\nPlay the processed audio output from a guitar on a speaker.\nImplement real-time digital effects processing on an STM32L432KC microcontroller.\nInterface a UPduino FPGA for control logic and foot pedal input handling.\nPass a clear audio sample through the FPGA memory architecture.\nDesign and integrate an audio amplifier output stage capable of directly driving a small guitar speaker or external cabinet.\nDevelop a low-noise analog front-end for clean audio acquisition and output.\nCreate a user-friendly interface using foot pedals for live control and effect toggling.\n\n\n\n\nThe system consists of the following components:\nThe amplifier system consists of the following main components:\n\nSTM32L432KC MCU:\n\nTakes sampled input data from the FPGA and applies some audio distortion effects. Drives the speaker through an audio amplifier by outputting a wave signal through a DAC channel\n\nUPduino (Lattice iCE40 FPGA):\n\nTakes input from ADC, samples the input frequency and subsequently does some of the delay based audio effects. Outputs the sampled signal or the modified signal to the MCU through SPI communication. Handles the input controls from some of the toggle switches.\n\nAnalog Front-End:\n\nIncludes preamplification, signal conditioning, and level shifting circuits to ensure proper ADC input voltage levels and low-noise operation. The output stage reconditions the signal for amplifier or headphone output.\n\nFoot Pedal Controls:\n\nUp to four pedals are used to toggle each effect (reverb, delay, chorus, distortion) on or off, as well as adjust intensity parameters such as delay time, chorus depth, or reverb level.\n\nAmplifier Output:\n\nPerforms amplification of signal from the MCU which is passed through an audio amplifier chip that drives into a guitar amp.\n\n\n\n\n\nThe FPGA will communicate with an ADC over a serial communication protocol, enabling it to read in 12-bit analog signal. This information will be stored in the FPGA memory before being read out at various times to implement delay based effects in our sound.\n\n\n\nIn this project, the MCU will take data over SPI communications from the FPGA. After this, the MCU will determine whether a distortion and/or vibrato effect should be applied to the signal. It will apply the relevant transformations, and then it will use the onboard DAC to convert back to an analog signal before outputting through the second stage amplifier.\n\n\n\nOur design has two main points that will be high-risk areas for our design: the FPGA design with an unfamiliar component (SRAM) and the analog preamplifier to bring the guitar’s output signal into range for the ADC (0-3.3 V). This design was talked about in class, and we should be able to use the information from lecture to create a preamplifier and appropriately generate our offset. Additionally, when using the SRAM on the FPGA, we should be extra careful to understand the datasheet fully in order to correctly implement the memory-based delay effects.\n\n\n\nTwo major points of our circuit will need to be calculated to find optimal operating conditions; these are the input and output points as well as the internal DSP relevant to making all desired effects.\nOn the analog side, input signal ranges from 0.1 to 1.0 Vpp centered around 0 V, with a frequency between 80 and 5000 Hz. We need to be able to shift the signal and amplify to fit the FPGA input specs of 0 to 3.3 V. this means, for an op-amp:\n\nSlew rate\n\n\\(SR \\geq 2 \\pi f_{max} V_{pk}\\)\n\\(SR \\geq 5 \\frac{V}{\\mu s}\\)\n\nGBW Product\n\nIf max closed loop gain is 10, and we desire a flat response to 100 KHz, choose \\(GBW \\geq 10 * 100 kHz = 1 MHz\\)\n\n\nFor the digital domain, we are mostly worried about the effects of aliasing on our sampled data. Because distortion works by clipping the extreme ranges of our signal, and chorus and reverb work by slightly delaying the phase of our signal before recombining it in some ratio, sampling at a much larger rate than our output frequency (44100 KHz) will enable an appropriately high fidelity output.\n\n\n\nThe following block diagram shows how signals will flow through the system.\n Figure 1: Block diagram of system design\nThe guitar signal will be sent through a pre-processing amplifier that will limit noise as well as increasing the voltage of the guitar’s signal to a readable level. The FPGA will read the signal and convert it to digital, as well as applying the reverb and chorus effects if those pedals are active. The signal is then passed over SPI communication to the MCU, where the distortion and vibrato effects can be applied. Finally, the MCU will use its onboard DAC to convert the signal back to analog, where it will encounter a post-processing amplifier before going into a guitar amplifier.\n\n\n\nThe following GANTT chart shows how work will be broken down over the 5 weeks given for the project.\n Figure 2: GANTT chart showing schedule for project over 5 weeks\n\n\n\nBelow is the bill of materials we have planned for this project:\n Figure 3: BoM for project"
+    "text": "HMC E155 Lab 1: FPGA and MCU Setup and Testing\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHMC E155 Lab 2: Multiplexed 7-Segment Display\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHMC E155 Lab 4: Digital Audio\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHMC E155 Lab 5: Interrupts\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHMC E155 Lab 6: The Internet of Things and Serial Peripheral Interface\n\n\n\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#description",
-    "href": "labs/project_overview/project_overview.html#description",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html",
+    "href": "project/project_final_report/project_final_report.html",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "Our final project will be to design and build a digital guitar amplifier capable of producing 4 audio effects: distortion, reverb, vibrato, and chorus. Using an iCE 40UP5K FPGA and an ADC, we will sample our guitar output and perform all effects related to time-delay. An STM32L432KC microcontroller will perform all modifications that change the amplitude of our signal in a non-linear way as well as converting our digital signal back to an analog one before recentering and playing our signal."
+    "text": "Our final project was to design and build a digital guitar amplifier capable of producing 4 audio effects: distortion, reverb, vibrato, and chorus. Using an iCE 40UP5K FPGA and an MCP3202 ADC, we sample our guitar output and perform all effects related to time-delay. An STM32L432KC microcontroller performs all modifications that change the amplitude of our signal in a non-linear way as well as converting our digital signal back to an analog one before recentering and playing our signal.\n\n\n\n\n\nLughnasa Miller is a senior Computer Science major at Harvey Mudd College. She focuses her studies in computer science at the system level, learning about the interaction between low level code and system components and creating embedded systems to solve problems. Outside of the classroom, you can find her playing one of the seven instruments she has learned or organizing queer community through the PRISM club and other engagements. Lughnasa can be found on GitHub as well as LinkedIn.\n\n\n\nKanoa is a Senior at Harvey Mudd College, born and raised in Los Angeles, CA. His passions are in Automotive Engineering, and 3D Design. Currently, he is an active member of Claremont College’s Men’s Rugby Team. In his leisure time, he enjoys hiking, camping, vegetarian cooking, and pursuing creative endeavors in wood carving and model building. Kanoa can be found on GitHub as well as LinkedIn.\n\n\n\n\nThe FPGA aimed to communicate with an ADC over a serial communication protocol, enabling it to read in a 12-bit serial analog signal. This information will be stored in the FPGA memory blocks before being read out at various times to implement delay based effects in our sound.\nTwo main halves of this system were ideated and implemented: a controller SPI communication module for interfacing with the ADC chip purchased for this project, as well as a memory for storing samples and loading into a shift register that interfaced with our STM32L432KC processor as a peripheral to the MCU’s SPI communications. The full details of the digital design can be interpreted in the block diagram shown below.\n Figure 1: Block diagram of the FPGA implementation\nThe ADC SPI module implemented a shift register to record input from the ADC and utilized an FSM that controlled the FPGA’s SDO bit as well as asserting signals to the memory when a sample was ready to be stored. The datapath contained an FSM that controlled when memory was read and the current address in memory was implemented, and there was a specially designed shift register that functioned on either the FPGA or MCU clock in order to both load and empty the register.\n\n\n\nIn this project, the MCU will take data over SPI communications from the FPGA. After this, the MCU will determine whether a distortion and/or vibrato effect should be applied to the signal. It will apply the relevant transformations, and then it will use the onboard DAC to convert back to an analog signal before outputting to a \\(\\frac{1}{4}\\) in. audio jack which drives a small guitar amp.\n\n\n\nIn this project, we aimed to implement an ADC that was interfaced with by the FPGA. This allowed us to use the MCU’s onboard DAC to complete a full datapath and enabled us to not circle back, having to send signals back and forth between the MCU and FPGA. This challenged us in a number of ways, including designing an FSM on the FPGA capable of sending the proper initiation bits to read a signal as well as learning how to synchronize this design with the rest of our datapath.\n\n\n\nBelow is the surrounding electrical schematic. On the rx chain, filtering was implemented to clean out signal before moving it from an ~ 100 mVAC signal to a 0-3.3 VDC signal that is acceptable for digital interfacing. At the other end of the system, after the MCU’s DAC, these operations were inverted so our signal once again mimicked that of a standard guitar. Below, a schematic of our electrical system can be seen.\n Figure 2: Full surrounding electrical schematic for signal voltage adjustment\n\n\n\nBelow is a figure detailing the bill of materials used in this project.\n Figure 3: Bill of materials detailing materials aquired for use in this project\n\n\nIn our project, we were unable to achieve the goals we had set for our FPGA design. A major roadblock for us was interfacing the ADC with the FPGA. This error was very confusing with us, as communication over SPI was intermmittent and unstable, but did work occasionally. Too late in our project, we realized that the sampling rate that we wanted to achieve with our FPGA architecture was not compatible with the ADC we had purchased. As a result, we had to modify our clock tree and sampling rate previously designed.\nAnother major roadblock we navigated was loading the shift register for the MCU to read samples from the FPGA. This happened because the FPGA ran on its own clock domain, and the MCU ran its SPI transactions on a separate clock that ran approximately 500 MHz faster than that on the FPGA. However, this roadbock was successfully navigated and can be seen in the following section.\nThe MCU systems we aimed to implement worked well on their own. The first major piece of our design was the SPI communications between the MCU and the FPGA. By looking at the digital trace of these communications below, we can see that the MCU successfully retrieved a sample from the FPGA.\n Figure 4: FPGA to MCU SPI transaction\nThe next step was for the MCU to use the onboard DAC to process a clean signal and send it through our postprocessing chain. This was done in the image seen below using a sample frequency, indicating that we were capable of outputting a known voltage.\n Figure 5: Clean MCU output wave trace\nFinally, we implemented the distortion effect, which functions by clipping the edges of our signal range to make our audio waves more square. This gives the audio a distorted effect, which can be seen in songs as early as Voodoo Child (Slight Return) by Jimi Hendrix. Below is an oscilloscope trace conveying a working distortion signal using sample data.\n Figure 6: MCU output wave trace with distortion\n\n\n\n\nOverall, our team learned a lot in the experience of completing the project, even if we did not achieve the final goal of creating a functional guitar pedal. We definitely undersold ourselves on the amount of time we would need to complete our project, and it ended up being the nail in the coffin for our group. However, we did learn valuable lessons in reading our datasheets and learning specific SPI protocols. We also gained valuable experience in designing clock domains with synchrony across multiple clocks, which was a difficult but valuable achievement for us in the later stages of our project.\nWe also think that the architecture for our project was very solid, and the various components for the project were ones we feel were right for the job. Given a few more days, we believe we could have bugfixed the commnunications between the ADC and FPGA, which would have processed a clean sample for us. Following this, we would have been able to complete modifications to the FPGA datapath that would have allowed averaging of past samples to enable reverb and chorus effects. Finally, enabling the RNG peripheral on the MCU would have given us a method for implementing the vibrato effect on the signal, completing our fourth and final effect, and the total goal for our project.\n\n\n\nWe want to thank Prof. Spencer, Javier, and the E155 grutoring team for their guidance and advice as we went along the path of this project. We also want to thank engineering staff as a whole for their support, especially in the final push of the project and in aquiring the materials necessary to complete the project.\n\n\n\nSTM32L432KC Documentation and Reference Manual\nICE40UP5K Family Datasheet\nMicrochip MCP3202 ADC Documentation\nGitHub Project Repository"
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#system-specifications",
-    "href": "labs/project_overview/project_overview.html#system-specifications",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#description",
+    "href": "project/project_final_report/project_final_report.html#description",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "Our system will meet the following specifications upon completion:\n\nPlay the processed audio output from a guitar on a speaker.\nImplement real-time digital effects processing on an STM32L432KC microcontroller.\nInterface a UPduino FPGA for control logic and foot pedal input handling.\nPass a clear audio sample through the FPGA memory architecture.\nDesign and integrate an audio amplifier output stage capable of directly driving a small guitar speaker or external cabinet.\nDevelop a low-noise analog front-end for clean audio acquisition and output.\nCreate a user-friendly interface using foot pedals for live control and effect toggling."
+    "text": "Our final project was to design and build a digital guitar amplifier capable of producing 4 audio effects: distortion, reverb, vibrato, and chorus. Using an iCE 40UP5K FPGA and an MCP3202 ADC, we sample our guitar output and perform all effects related to time-delay. An STM32L432KC microcontroller performs all modifications that change the amplitude of our signal in a non-linear way as well as converting our digital signal back to an analog one before recentering and playing our signal."
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#system-overview",
-    "href": "labs/project_overview/project_overview.html#system-overview",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#biographies",
+    "href": "project/project_final_report/project_final_report.html#biographies",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "The system consists of the following components:\nThe amplifier system consists of the following main components:\n\nSTM32L432KC MCU:\n\nTakes sampled input data from the FPGA and applies some audio distortion effects. Drives the speaker through an audio amplifier by outputting a wave signal through a DAC channel\n\nUPduino (Lattice iCE40 FPGA):\n\nTakes input from ADC, samples the input frequency and subsequently does some of the delay based audio effects. Outputs the sampled signal or the modified signal to the MCU through SPI communication. Handles the input controls from some of the toggle switches.\n\nAnalog Front-End:\n\nIncludes preamplification, signal conditioning, and level shifting circuits to ensure proper ADC input voltage levels and low-noise operation. The output stage reconditions the signal for amplifier or headphone output.\n\nFoot Pedal Controls:\n\nUp to four pedals are used to toggle each effect (reverb, delay, chorus, distortion) on or off, as well as adjust intensity parameters such as delay time, chorus depth, or reverb level.\n\nAmplifier Output:\n\nPerforms amplification of signal from the MCU which is passed through an audio amplifier chip that drives into a guitar amp."
+    "text": "Lughnasa Miller is a senior Computer Science major at Harvey Mudd College. She focuses her studies in computer science at the system level, learning about the interaction between low level code and system components and creating embedded systems to solve problems. Outside of the classroom, you can find her playing one of the seven instruments she has learned or organizing queer community through the PRISM club and other engagements. Lughnasa can be found on GitHub as well as LinkedIn.\n\n\n\nKanoa is a Senior at Harvey Mudd College, born and raised in Los Angeles, CA. His passions are in Automotive Engineering, and 3D Design. Currently, he is an active member of Claremont College’s Men’s Rugby Team. In his leisure time, he enjoys hiking, camping, vegetarian cooking, and pursuing creative endeavors in wood carving and model building. Kanoa can be found on GitHub as well as LinkedIn."
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#fpga-design-details",
-    "href": "labs/project_overview/project_overview.html#fpga-design-details",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#fpga-design-information",
+    "href": "project/project_final_report/project_final_report.html#fpga-design-information",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "The FPGA will communicate with an ADC over a serial communication protocol, enabling it to read in 12-bit analog signal. This information will be stored in the FPGA memory before being read out at various times to implement delay based effects in our sound."
+    "text": "The FPGA aimed to communicate with an ADC over a serial communication protocol, enabling it to read in a 12-bit serial analog signal. This information will be stored in the FPGA memory blocks before being read out at various times to implement delay based effects in our sound.\nTwo main halves of this system were ideated and implemented: a controller SPI communication module for interfacing with the ADC chip purchased for this project, as well as a memory for storing samples and loading into a shift register that interfaced with our STM32L432KC processor as a peripheral to the MCU’s SPI communications. The full details of the digital design can be interpreted in the block diagram shown below.\n Figure 1: Block diagram of the FPGA implementation\nThe ADC SPI module implemented a shift register to record input from the ADC and utilized an FSM that controlled the FPGA’s SDO bit as well as asserting signals to the memory when a sample was ready to be stored. The datapath contained an FSM that controlled when memory was read and the current address in memory was implemented, and there was a specially designed shift register that functioned on either the FPGA or MCU clock in order to both load and empty the register."
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#mcu-design-details",
-    "href": "labs/project_overview/project_overview.html#mcu-design-details",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#mcu-design-information",
+    "href": "project/project_final_report/project_final_report.html#mcu-design-information",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "In this project, the MCU will take data over SPI communications from the FPGA. After this, the MCU will determine whether a distortion and/or vibrato effect should be applied to the signal. It will apply the relevant transformations, and then it will use the onboard DAC to convert back to an analog signal before outputting through the second stage amplifier."
+    "text": "In this project, the MCU will take data over SPI communications from the FPGA. After this, the MCU will determine whether a distortion and/or vibrato effect should be applied to the signal. It will apply the relevant transformations, and then it will use the onboard DAC to convert back to an analog signal before outputting to a \\(\\frac{1}{4}\\) in. audio jack which drives a small guitar amp."
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#riskiest-elements",
-    "href": "labs/project_overview/project_overview.html#riskiest-elements",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#new-digital-chip-microchip-mcp3202-adc",
+    "href": "project/project_final_report/project_final_report.html#new-digital-chip-microchip-mcp3202-adc",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "Our design has two main points that will be high-risk areas for our design: the FPGA design with an unfamiliar component (SRAM) and the analog preamplifier to bring the guitar’s output signal into range for the ADC (0-3.3 V). This design was talked about in class, and we should be able to use the information from lecture to create a preamplifier and appropriately generate our offset. Additionally, when using the SRAM on the FPGA, we should be extra careful to understand the datasheet fully in order to correctly implement the memory-based delay effects."
+    "text": "In this project, we aimed to implement an ADC that was interfaced with by the FPGA. This allowed us to use the MCU’s onboard DAC to complete a full datapath and enabled us to not circle back, having to send signals back and forth between the MCU and FPGA. This challenged us in a number of ways, including designing an FSM on the FPGA capable of sending the proper initiation bits to read a signal as well as learning how to synchronize this design with the rest of our datapath."
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#calculations",
-    "href": "labs/project_overview/project_overview.html#calculations",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#electrical-schematic",
+    "href": "project/project_final_report/project_final_report.html#electrical-schematic",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "Two major points of our circuit will need to be calculated to find optimal operating conditions; these are the input and output points as well as the internal DSP relevant to making all desired effects.\nOn the analog side, input signal ranges from 0.1 to 1.0 Vpp centered around 0 V, with a frequency between 80 and 5000 Hz. We need to be able to shift the signal and amplify to fit the FPGA input specs of 0 to 3.3 V. this means, for an op-amp:\n\nSlew rate\n\n\\(SR \\geq 2 \\pi f_{max} V_{pk}\\)\n\\(SR \\geq 5 \\frac{V}{\\mu s}\\)\n\nGBW Product\n\nIf max closed loop gain is 10, and we desire a flat response to 100 KHz, choose \\(GBW \\geq 10 * 100 kHz = 1 MHz\\)\n\n\nFor the digital domain, we are mostly worried about the effects of aliasing on our sampled data. Because distortion works by clipping the extreme ranges of our signal, and chorus and reverb work by slightly delaying the phase of our signal before recombining it in some ratio, sampling at a much larger rate than our output frequency (44100 KHz) will enable an appropriately high fidelity output."
+    "text": "Below is the surrounding electrical schematic. On the rx chain, filtering was implemented to clean out signal before moving it from an ~ 100 mVAC signal to a 0-3.3 VDC signal that is acceptable for digital interfacing. At the other end of the system, after the MCU’s DAC, these operations were inverted so our signal once again mimicked that of a standard guitar. Below, a schematic of our electrical system can be seen.\n Figure 2: Full surrounding electrical schematic for signal voltage adjustment"
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#block-diagram",
-    "href": "labs/project_overview/project_overview.html#block-diagram",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#bill-of-materials",
+    "href": "project/project_final_report/project_final_report.html#bill-of-materials",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "The following block diagram shows how signals will flow through the system.\n Figure 1: Block diagram of system design\nThe guitar signal will be sent through a pre-processing amplifier that will limit noise as well as increasing the voltage of the guitar’s signal to a readable level. The FPGA will read the signal and convert it to digital, as well as applying the reverb and chorus effects if those pedals are active. The signal is then passed over SPI communication to the MCU, where the distortion and vibrato effects can be applied. Finally, the MCU will use its onboard DAC to convert the signal back to analog, where it will encounter a post-processing amplifier before going into a guitar amplifier."
+    "text": "Below is a figure detailing the bill of materials used in this project.\n Figure 3: Bill of materials detailing materials aquired for use in this project\n\n\nIn our project, we were unable to achieve the goals we had set for our FPGA design. A major roadblock for us was interfacing the ADC with the FPGA. This error was very confusing with us, as communication over SPI was intermmittent and unstable, but did work occasionally. Too late in our project, we realized that the sampling rate that we wanted to achieve with our FPGA architecture was not compatible with the ADC we had purchased. As a result, we had to modify our clock tree and sampling rate previously designed.\nAnother major roadblock we navigated was loading the shift register for the MCU to read samples from the FPGA. This happened because the FPGA ran on its own clock domain, and the MCU ran its SPI transactions on a separate clock that ran approximately 500 MHz faster than that on the FPGA. However, this roadbock was successfully navigated and can be seen in the following section.\nThe MCU systems we aimed to implement worked well on their own. The first major piece of our design was the SPI communications between the MCU and the FPGA. By looking at the digital trace of these communications below, we can see that the MCU successfully retrieved a sample from the FPGA.\n Figure 4: FPGA to MCU SPI transaction\nThe next step was for the MCU to use the onboard DAC to process a clean signal and send it through our postprocessing chain. This was done in the image seen below using a sample frequency, indicating that we were capable of outputting a known voltage.\n Figure 5: Clean MCU output wave trace\nFinally, we implemented the distortion effect, which functions by clipping the edges of our signal range to make our audio waves more square. This gives the audio a distorted effect, which can be seen in songs as early as Voodoo Child (Slight Return) by Jimi Hendrix. Below is an oscilloscope trace conveying a working distortion signal using sample data.\n Figure 6: MCU output wave trace with distortion"
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#schedule-and-work-breakdown",
-    "href": "labs/project_overview/project_overview.html#schedule-and-work-breakdown",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#reflection",
+    "href": "project/project_final_report/project_final_report.html#reflection",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "The following GANTT chart shows how work will be broken down over the 5 weeks given for the project.\n Figure 2: GANTT chart showing schedule for project over 5 weeks"
+    "text": "Overall, our team learned a lot in the experience of completing the project, even if we did not achieve the final goal of creating a functional guitar pedal. We definitely undersold ourselves on the amount of time we would need to complete our project, and it ended up being the nail in the coffin for our group. However, we did learn valuable lessons in reading our datasheets and learning specific SPI protocols. We also gained valuable experience in designing clock domains with synchrony across multiple clocks, which was a difficult but valuable achievement for us in the later stages of our project.\nWe also think that the architecture for our project was very solid, and the various components for the project were ones we feel were right for the job. Given a few more days, we believe we could have bugfixed the commnunications between the ADC and FPGA, which would have processed a clean sample for us. Following this, we would have been able to complete modifications to the FPGA datapath that would have allowed averaging of past samples to enable reverb and chorus effects. Finally, enabling the RNG peripheral on the MCU would have given us a method for implementing the vibrato effect on the signal, completing our fourth and final effect, and the total goal for our project."
   },
   {
-    "objectID": "labs/project_overview/project_overview.html#bill-of-materialsbudget",
-    "href": "labs/project_overview/project_overview.html#bill-of-materialsbudget",
-    "title": "E155 Final Project: Multi-Effect Guitar Pedal",
+    "objectID": "project/project_final_report/project_final_report.html#acknowledgements",
+    "href": "project/project_final_report/project_final_report.html#acknowledgements",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
     "section": "",
-    "text": "Below is the bill of materials we have planned for this project:\n Figure 3: BoM for project"
+    "text": "We want to thank Prof. Spencer, Javier, and the E155 grutoring team for their guidance and advice as we went along the path of this project. We also want to thank engineering staff as a whole for their support, especially in the final push of the project and in aquiring the materials necessary to complete the project."
+  },
+  {
+    "objectID": "project/project_final_report/project_final_report.html#references",
+    "href": "project/project_final_report/project_final_report.html#references",
+    "title": "E155 Final Report: Multi-Effect Guitar Pedal",
+    "section": "",
+    "text": "STM32L432KC Documentation and Reference Manual\nICE40UP5K Family Datasheet\nMicrochip MCP3202 ADC Documentation\nGitHub Project Repository"
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Final Project",
+    "section": "",
+    "text": "E155 Final Report: Multi-Effect Guitar Pedal\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nE155 Final Project: Multi-Effect Guitar Pedal\n\n\n\n\n\n\n\n\n\n\n\nNo matching items"
   }
 ]
