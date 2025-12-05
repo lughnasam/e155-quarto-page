@@ -1,0 +1,15 @@
+# E155 Final Project: Midpoint Check-In
+
+## Overview
+
+Our project is slightly behind where we intended to be by this point. I believe that we misidentified what the midpoint would be for our project, as our two riskiest components sat before our midpoint check-in. We did complete these two major components (FPGA architecture and RX chain), which is a major load off of our project, and we are feeling confident in completion.
+
+## Electrical Schematic
+
+Below is the electrical schematic for our RX chain. This schematic is a filtering and conditioning circuit for the Analog to Digital Converter. The butterworth filter takes in the analog signal from the audio jack and removes any aliasing. The first opamp is a unity gain  amplifier. The second opamp is a summing amplifier that raises the signal from centered around 0V to centered around 2.5V, it is adjusted by varying the 100K potentiometers. Then there is another unity gain amplifier into a non inverting amplifier. The non-inverting amplifier amplifies the signal to fit the ADC input range of 0V to 5V.
+
+Currently the summing amplifier and the noninverting amplifier are connected and working. To still be built is the butterworth filter and the ADC is still to be connected.
+
+
+## Block Diagram
+

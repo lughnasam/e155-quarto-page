@@ -7,8 +7,10 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: blog.qmd
-        text: Blog
+      - href: labs.qmd
+        text: Labs
+      - href: project.qmd
+        text: Guitar Pedals Project
 
 format:
   html:

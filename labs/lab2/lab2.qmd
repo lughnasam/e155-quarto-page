@@ -1,4 +1,4 @@
-# HMC E155 Lab 1: FPGA and MCU Setup and Testing
+# HMC E155 Lab 2: Multiplexed 7-Segment Display
 
 ## Introduction
 

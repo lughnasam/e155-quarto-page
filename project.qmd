@@ -1,7 +1,7 @@
 ---
-title: "E155 Blog"
+title: "Final Project"
 listing:
-    contents: posts
+    contents: project
     sort: "date desc"
     type: default
     categories: false
